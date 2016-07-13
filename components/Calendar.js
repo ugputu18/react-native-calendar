@@ -43,7 +43,8 @@ export default class Calendar extends Component {
     titleFormat: PropTypes.string,
     today: PropTypes.any,
     weekStart: PropTypes.number,
-    dayComponent: PropTypes.any
+    dayComponent: PropTypes.any,
+    dayComponentProps: PropTypes.object,
   };
 
   static defaultProps = {
@@ -61,7 +62,8 @@ export default class Calendar extends Component {
     titleFormat: 'MMMM YYYY',
     today: moment(),
     weekStart: 1,
-    dayComponent: undefined,
+    dayComponent: Day,
+    dayComponentProps: {},
   };
 
   componentDidMount() {
@@ -97,7 +99,7 @@ export default class Calendar extends Component {
     return parsedDates;
   }
 
-  selectDate(date) {
+  selectDate = (date) => {
     this.setState({ selectedMoment: date });
     this.props.onDateSelect && this.props.onDateSelect(date.format());
   }
@@ -153,35 +155,34 @@ export default class Calendar extends Component {
       argMonthDaysCount = argMoment.daysInMonth(),
       offset = (startOfArgMonthMoment.isoWeekday() - weekStart + 7) % 7,
       argMonthIsToday = argMoment.isSame(todayMoment, 'month'),
-      selectedIndex = moment(selectedMoment).date() - 1,
-      selectedMonthIsArg = selectedMoment.isSame(argMoment, 'month');
+      selectedIndex = selectedMoment.date() - 1,
+      selectedMonthIsArg = selectedMoment.isSame(argMoment, 'month'),
+      DayComponent = this.props.dayComponent,
+      dayComponentProps = this.props.dayComponentProps;
 
     const events = (eventDatesMap !== null)
       ? eventDatesMap[argMoment.startOf('month').format()]
       : null;
 
     let day = moment(startOfArgMonthMoment).add(-offset, 'days');
-    const DayComponent = this.props.dayComponent || Day;
     for (i in Array(42).fill(0)) {
       const dayIndex = renderIndex - offset;
       const isoWeekday = (renderIndex + weekStart) % 7;
 
       days.push((
         <DayComponent
-          day={moment(day)}
-          startOfMonth={startOfArgMonthMoment}
+          day={day.format('YYYY-MM-DD')}
           isWeekend={isoWeekday === 0 || isoWeekday === 6}
-          isCurrentMonth={dayIndex > 0 && dayIndex <= argMonthDaysCount}
+          isCurrentMonth={dayIndex >= 0 && dayIndex < argMonthDaysCount}
           key={`${renderIndex}`}
-          onPress={() => {
-            this.selectDate(moment(startOfArgMonthMoment).set('date', dayIndex + 1));
-          }}
+          onPress={this.selectDate}
           caption={day.format('D')}
           isToday={argMonthIsToday && (dayIndex === todayIndex)}
           isSelected={selectedMonthIsArg && (dayIndex === selectedIndex)}
           hasEvent={events && events[dayIndex] === true}
           usingEvents={this.props.eventDates.length > 0}
           customStyle={this.props.customStyle}
+          {...dayComponentProps}
         />
       ));
 
