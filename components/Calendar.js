@@ -13,7 +13,7 @@ import moment from 'moment';
 import styles from './styles';
 
 const DEVICE_WIDTH = Dimensions.get('window').width;
-const VIEW_INDEX = 2;
+const VIEW_INDEX = 1;
 
 export default class Calendar extends Component {
 
@@ -85,7 +85,7 @@ export default class Calendar extends Component {
     return [moment(currentMonth)];
   }
 
- prepareEventDates(eventDates) {
+  prepareEventDates(eventDates) {
     const parsedDates = {};
 
     eventDates.forEach(event => {
@@ -229,30 +229,30 @@ export default class Calendar extends Component {
   renderTopBar() {
     let localizedMonth = this.props.monthNames[this.state.currentMonthMoment.month()];
     return this.props.showControls
-    ? (
-        <View style={[styles.calendarControls, this.props.customStyle.calendarControls]}>
-          <TouchableOpacity
-            style={[styles.controlButton, this.props.customStyle.controlButton]}
-            onPress={this.onPrev}
-          >
-            <Text style={[styles.controlButtonText, this.props.customStyle.controlButtonText]}>
-              {this.props.prevButtonText}
-            </Text>
-          </TouchableOpacity>
-          <Text style={[styles.title, this.props.customStyle.title]}>
-            {localizedMonth} {this.state.currentMonthMoment.year()}
+      ? (
+      <View style={[styles.calendarControls, this.props.customStyle.calendarControls]}>
+        <TouchableOpacity
+          style={[styles.controlButton, this.props.customStyle.controlButton]}
+          onPress={this.onPrev}
+        >
+          <Text style={[styles.controlButtonText, this.props.customStyle.controlButtonText]}>
+            {this.props.prevButtonText}
           </Text>
-          <TouchableOpacity
-            style={[styles.controlButton, this.props.customStyle.controlButton]}
-            onPress={this.onNext}
-          >
-            <Text style={[styles.controlButtonText, this.props.customStyle.controlButtonText]}>
-              {this.props.nextButtonText}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      )
-    : (
+        </TouchableOpacity>
+        <Text style={[styles.title, this.props.customStyle.title]}>
+          {localizedMonth} {this.state.currentMonthMoment.year()}
+        </Text>
+        <TouchableOpacity
+          style={[styles.controlButton, this.props.customStyle.controlButton]}
+          onPress={this.onNext}
+        >
+          <Text style={[styles.controlButtonText, this.props.customStyle.controlButtonText]}>
+            {this.props.nextButtonText}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    )
+      : (
       <View style={[styles.calendarControls, this.props.customStyle.calendarControls]}>
         <Text style={[styles.title, this.props.customStyle.title]}>
           {this.state.currentMonthMoment.format(this.props.titleFormat)}
