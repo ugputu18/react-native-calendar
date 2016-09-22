@@ -178,7 +178,7 @@ export default class Calendar extends Component {
           onPress={this.selectDate}
           caption={day.format('D')}
           isToday={argMonthIsToday && (dayIndex === todayIndex)}
-          isSelected={selectedMonthIsArg && (dayIndex === selectedIndex)}
+          isSelected={day.isSame(selectedMoment, 'day')}
           hasEvent={events && events[dayIndex] === true}
           usingEvents={this.props.eventDates.length > 0}
           customStyle={this.props.customStyle}
