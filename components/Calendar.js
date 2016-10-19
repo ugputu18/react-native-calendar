@@ -47,6 +47,8 @@ export default class Calendar extends Component {
     dayComponentProps: PropTypes.object,
   };
 
+  monthViews = {}
+
   static defaultProps = {
     customStyle: {},
     dayHeadings: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
@@ -104,16 +106,34 @@ export default class Calendar extends Component {
     this.props.onDateSelect && this.props.onDateSelect(date.format());
   }
 
+  changeMonth = (monthMoment) => {
+    this.restoreMonths = true
+    this.setState({ currentMonthMoment: monthMoment });
+  }
+
+  renderMonths = (calendarDates, eventDatesMap) => {
+    const res = [], monthViews = {};
+    for (date of calendarDates) {
+      const month = moment(date);
+      const key = month.format('YYYY-MM-DD');
+      monthViews[key] = this.restoreMonths && this.monthViews[key] || this.renderMonthView(month, eventDatesMap);
+      res.push(monthViews[key]);
+    }
+    this.monthViews = monthViews;
+    this.restoreMonths = false;
+    return res;
+  }
+
   onPrev = () => {
     const newMoment = moment(this.state.currentMonthMoment).subtract(1, 'month');
-    this.setState({ currentMonthMoment: newMoment });
+    this.changeMonth(newMoment)
     this.props.onTouchPrev && this.props.onTouchPrev(newMoment);
     this.props.onMonthChange && this.props.onMonthChange(newMoment);
   }
 
   onNext = () => {
     const newMoment = moment(this.state.currentMonthMoment).add(1, 'month');
-    this.setState({ currentMonthMoment: newMoment });
+    this.changeMonth(newMoment)
     this.props.onTouchNext && this.props.onTouchNext(newMoment);
     this.props.onMonthChange && this.props.onMonthChange(newMoment);
   }
@@ -121,7 +141,10 @@ export default class Calendar extends Component {
   scrollToItem(itemIndex) {
     const scrollToX = itemIndex * DEVICE_WIDTH;
     if (this.props.scrollEnabled) {
-      this._calendar.scrollTo({ y: 0, x: scrollToX, animated: false });
+      // this._calendar.scrollTo({ y: 0, x: scrollToX, animated: false })
+      requestAnimationFrame(() =>
+        this._calendar.scrollTo({ y: 0, x: scrollToX, animated: false })
+      );
     }
   }
 
@@ -129,7 +152,7 @@ export default class Calendar extends Component {
     const position = event.nativeEvent.contentOffset.x;
     const currentPage = position / DEVICE_WIDTH;
     const newMoment = moment(this.state.currentMonthMoment).add(currentPage - VIEW_INDEX, 'month');
-    this.setState({ currentMonthMoment: newMoment });
+    this.changeMonth(newMoment)
 
     if (currentPage < VIEW_INDEX) {
       this.props.onSwipePrev && this.props.onSwipePrev(newMoment);
@@ -281,7 +304,7 @@ export default class Calendar extends Component {
             automaticallyAdjustContentInsets
             onMomentumScrollEnd={(event) => this.scrollEnded(event)}
           >
-            {calendarDates.map((date) => this.renderMonthView(moment(date), eventDatesMap))}
+            {this.renderMonths(calendarDates, eventDatesMap)}
           </ScrollView>
           :
           <View ref={calendar => this._calendar = calendar}>
