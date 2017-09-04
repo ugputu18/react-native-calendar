@@ -62,8 +62,6 @@ export default class Calendar extends Component {
     titleFormat: PropTypes.string,
     today: PropTypes.any,
     weekStart: PropTypes.number,
-    dayComponent: PropTypes.any,
-    dayComponentProps: PropTypes.object,
     calendarFormat: PropTypes.string
   };
 
@@ -86,8 +84,6 @@ export default class Calendar extends Component {
     startDate: moment().format('YYYY-MM-DD'),
     titleFormat: 'MMMM YYYY',
     weekStart: 1,
-    dayComponent: Day,
-    dayComponentProps: {},
     calendarFormat: 'monthly' // weekly or monthly
   };
 
@@ -263,8 +259,6 @@ export default class Calendar extends Component {
       offset = calFormat === 'monthly' ?
         (startOfArgMoment.isoWeekday() - weekStart + 7) % 7 : 0,
       selectedIndex = moment(selectedMoment).date() - 1;
-      DayComponent = this.props.dayComponent,
-      dayComponentProps = this.props.dayComponentProps;
 
     let day = moment(startOfArgMonthMoment).add(-offset, 'days');
     for (i in Array(42).fill(0)) {
