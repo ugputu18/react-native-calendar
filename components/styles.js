@@ -20,9 +20,11 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
+    margin: 10,
+  },
+  titleText: {
     textAlign: 'center',
     fontSize: 15,
-    margin: 10,
   },
   calendarHeading: {
     flexDirection: 'row',
@@ -44,6 +46,9 @@ const styles = StyleSheet.create({
   },
   weekRow: {
     flexDirection: 'row',
+  },
+  weekendDayButton: {
+    backgroundColor: '#fafafa',
   },
   dayButton: {
     alignItems: 'center',
@@ -87,6 +92,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
   },
   hasEventCircle: {
+  },
+  hasEventDaySelectedCircle: {
   },
   hasEventText: {
   },
